@@ -40,17 +40,3 @@ async def webhook_handler(request: Request):
     update = Update.model_validate(data)
     await dp.feed_update(bot, update)
     return {"status": "ok"}
-
-# async def main():
-#     async with engine.begin() as conn:
-#         await conn.run_sync(Base.metadata.create_all)
-
-#     bot = Bot(token=BOT_TOKEN)
-#     dp = Dispatcher()
-
-#     dp.include_router(router)
-
-#     await dp.start_polling(bot)
-
-# if __name__ == "__main__":
-#     asyncio.run(main())
