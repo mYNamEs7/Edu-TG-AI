@@ -24,10 +24,10 @@ async def cmd_start(message: TgMessage):
         f"Привет, <b>{message.from_user.first_name}</b> 👋\n\n"
         "Я — твой интеллектуальный помощник.\n\n"
         "<b>Доступные режимы:</b>\n"
-        "📚 exam — подготовка к экзаменам\n"
-        "🏛 university — университетский стиль\n"
-        "🎓 thesis — научный стиль\n"
-        "✏ short — краткие ответы\n\n"
+        "📚 Экзамен — краткие ответы, строгое объяснение.\n"
+        "🏛 Университет — развернутые ответы с примерами.\n"
+        "🎓 Диссертация — максимально подробные, академические объяснения.\n"
+        "✏ Краткий ответ — очень короткие и лаконичные ответы.\n\n"
         "Нажми кнопку ниже, чтобы выбрать режим 👇"
     )
 
@@ -85,19 +85,20 @@ async def mode_selection(message: TgMessage):
 
 @router.callback_query(lambda c: c.data == "go_mode")
 async def go_mode(callback: CallbackQuery):
+    await callback.message.edit_reply_markup(reply_markup=None)
     await callback.message.answer("/mode")
     await mode_selection(message=callback.message)
 
 @router.callback_query(lambda c: c.data and c.data.startswith("mode:"))
 async def mode_callback(callback: CallbackQuery):
+    await callback.message.edit_reply_markup(reply_markup=None)
+    
     mode = callback.data.split(":")[1]
     text_to_send = f"/mode {mode}"
     
     await change_mode(mode=mode, user_id=callback.message.from_user.id)
     
     await callback.message.answer(f"Вы выбрали: {text_to_send}\n{MODE_DESCRIPTIONS[mode]}")
-
-    await callback.message.edit_reply_markup(reply_markup=None)
 
 async def change_mode(mode: str, user_id: int):
     async with AsyncSessionLocal() as session:
