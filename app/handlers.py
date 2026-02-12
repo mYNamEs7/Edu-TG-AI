@@ -1,5 +1,5 @@
 from aiogram import Router, F
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message as TgMessage
+from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message as TgMessage
 from aiogram.filters import Command
 from sqlalchemy import select
 from app.database import AsyncSessionLocal
@@ -9,52 +9,46 @@ from app.modes import MODE_DESCRIPTIONS
 
 router = Router()
 
-@router.message(Command(commands=["start"]))
+@router.message(Command("start"))
 async def cmd_start(message: Message):
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text="/mode")]
-        ],
-        resize_keyboard=True
+    await message.answer(
+        "Привет!\nЯ - нейросеть, помогающая студентам.\nИспользуй меню команд или напиши /mode, чтобы выбрать режим.\nРежим по умолчанию - exam"
+    )
+
+@router.message(Command("mode"))
+async def cmd_mode(message: Message):
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=mode, callback_data=f"mode:{mode}")]
+            for mode in MODE_DESCRIPTIONS
+        ]
     )
     await message.answer(
-        "Привет!\nЯ - нейросеть, помогающая студентам.\nИспользуй меню команд или напиши /mode, чтобы выбрать режим.\nРежим по умолчанию - exam",
+        "Выберите режим работы бота:",
         reply_markup=keyboard
     )
 
-@router.message(Command(commands=["mode"]))
-async def cmd_mode(message: Message):
-    keyboard = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text="exam")],
-            [KeyboardButton(text="university")],
-            [KeyboardButton(text="thesis")],
-            [KeyboardButton(text="short")]
-        ],
-        resize_keyboard=True
-    )
+@router.callback_query(lambda c: c.data and c.data.startswith("mode:"))
+async def mode_callback(callback: CallbackQuery):
+    mode = callback.data.split(":")[1]
+    text_to_send = f"/mode {mode}"
 
-    description_text = "Выберите режим работы бота:\n\n"
-    for key, desc in MODE_DESCRIPTIONS.items():
-        description_text += f"{key}: {desc}\n"
+    await change_mode(mode=mode, user_id=callback.message.from_user.id)
+    
+    await callback.message.answer(f"Вы выбрали: {text_to_send}\n{MODE_DESCRIPTIONS[mode]}")
 
-    await message.answer(description_text, reply_markup=keyboard)
+    await callback.message.edit_reply_markup(reply_markup=None)
 
-@router.message(F.text.startswith("/mode"))
-async def change_mode(message: TgMessage):
-    mode = message.text.split(" ")[1]
-
+async def change_mode(mode: str, user_id: int):
     async with AsyncSessionLocal() as session:
         result = await session.execute(
-            select(User).where(User.telegram_id == str(message.from_user.id))
+            select(User).where(User.telegram_id == str(user_id))
         )
         user = result.scalar_one_or_none()
 
         if user:
             user.mode = mode
             await session.commit()
-
-    await message.answer(f"Режим изменен на {mode}")
 
 @router.message()
 async def handle_message(message: TgMessage):

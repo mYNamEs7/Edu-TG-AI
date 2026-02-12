@@ -11,16 +11,14 @@ app = FastAPI()
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
 dp.include_router(router)
-print("hello 1")
 
 
 @app.on_event("startup")
 async def on_startup():
-    print("hello 11")
     # создаём таблицы
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-        
+
     print(WEBHOOK_URL)
     # удаляем старый webhook
     await bot.delete_webhook()
@@ -33,15 +31,14 @@ async def on_startup():
 
 @app.on_event("shutdown")
 async def on_shutdown():
-    print("hello 111")
     await bot.delete_webhook()
     await bot.session.close()
 
 
 @app.post(WEBHOOK_PATH)
 async def webhook_handler(request: Request):
-    print("hello 11111")
     data = await request.json()
     update = Update.model_validate(data)
     await dp.feed_update(bot, update)
+    print("Webhook Handler...")
     return {"status": "ok"}
