@@ -6,6 +6,7 @@ from app.database import AsyncSessionLocal
 from app.models import User, Message
 from app.pipeline import generate_answer
 from app.modes import MODE_DESCRIPTIONS
+import re
 
 router = Router()
 
@@ -86,4 +87,6 @@ async def handle_message(message: TgMessage):
         session.add(Message(user_id=user.id, role="assistant", content=answer))
         await session.commit()
 
+        answer = answer.replace("\\", "").replace("\\times", "*").replace("")
+        answer = re.sub(r"\*\*(.*?)\*\*", r"<b>\1</b>", answer)
         await message.answer(answer, parse_mode="HTML")
