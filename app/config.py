@@ -5,7 +5,13 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 API_KEY = os.getenv("API_KEY")
-DATABASE_URL = os.getenv("DATABASE_URL").replace(
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL is not set")
+
+DATABASE_URL = DATABASE_URL.replace(
     "postgresql://",
     "postgresql+asyncpg://"
 )
