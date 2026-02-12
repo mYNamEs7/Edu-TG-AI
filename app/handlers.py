@@ -69,6 +69,9 @@ async def cmd_restart(message: TgMessage):
 
 @router.message(Command("mode"))
 async def cmd_mode(message: TgMessage):
+    await mode_selection(message=message)
+
+async def mode_selection(message: TgMessage):
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text=mode, callback_data=f"mode:{mode}")]
@@ -83,7 +86,7 @@ async def cmd_mode(message: TgMessage):
 @router.callback_query(lambda c: c.data == "go_mode")
 async def go_mode(callback: CallbackQuery):
     await callback.message.answer("/mode")
-    await cmd_mode()
+    await mode_selection(message=callback.message)
 
 @router.callback_query(lambda c: c.data and c.data.startswith("mode:"))
 async def mode_callback(callback: CallbackQuery):
