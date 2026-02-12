@@ -32,6 +32,22 @@ async def on_startup():
         BotCommand(command="mode", description="Выбрать режим работы"),
     ])
 
+    await bot.set_my_description(
+        description=(
+            "🎓 Образование с нейросетью\n\n"
+            "Помогаю:\n"
+            "• Решать задачи\n"
+            "• Готовиться к экзаменам\n"
+            "• Писать курсовые и дипломные\n"
+            "• Давать краткие и развернутые ответы\n\n"
+            "Нажмите /start чтобы начать 🚀"
+        )
+    )
+
+    await bot.set_my_short_description(
+        short_description="ИИ-помощник для учебы 🎓"
+    )
+
     print("Webhook set to:", WEBHOOK_URL)
 
 

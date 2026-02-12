@@ -19,14 +19,16 @@ async def cmd_start(message: TgMessage):
     )
 
     text = (
-        "<b>🎓 Образование с нейросетью</b>\n\n"
-        "Добро пожаловать!\n\n"
-        "Я помогу тебе:\n"
-        "• Решать задачи\n"
-        "• Готовиться к экзаменам\n"
-        "• Писать курсовые и дипломные работы\n"
-        "• Получать краткие или развернутые ответы\n\n"
-        "<b>Выбери режим работы</b>, чтобы начать 👇"
+        "<b>🎓 ОБРАЗОВАНИЕ С НЕЙРОСЕТЬЮ</b>\n"
+        "━━━━━━━━━━━━━━━\n\n"
+        f"Привет, <b>{message.from_user.first_name}</b> 👋\n\n"
+        "Я — твой интеллектуальный помощник.\n\n"
+        "<b>Доступные режимы:</b>\n"
+        "📚 exam — подготовка к экзаменам\n"
+        "🏛 university — университетский стиль\n"
+        "🎓 thesis — научный стиль\n"
+        "✏ short — краткие ответы\n\n"
+        "Нажми кнопку ниже, чтобы выбрать режим 👇"
     )
 
     await message.answer(
@@ -81,7 +83,7 @@ async def cmd_mode(message: TgMessage):
 @router.callback_query(lambda c: c.data == "go_mode")
 async def go_mode(callback: CallbackQuery):
     await callback.message.answer("/mode")
-    await callback.answer()
+    await cmd_mode()
 
 @router.callback_query(lambda c: c.data and c.data.startswith("mode:"))
 async def mode_callback(callback: CallbackQuery):
