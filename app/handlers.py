@@ -25,7 +25,8 @@ async def change_mode(message: TgMessage):
 
 @router.message()
 async def handle_message(message: TgMessage):
-
+    await message.answer(f"Ты написал: {message.text}")
+    
     async with AsyncSessionLocal() as session:
 
         result = await session.execute(
