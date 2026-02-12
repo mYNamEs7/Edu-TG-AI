@@ -1,7 +1,7 @@
 import asyncio
 from fastapi import FastAPI, Request
 from aiogram import Bot, Dispatcher
-from aiogram.types import Update
+from aiogram.types import Update, BotCommand
 from app.config import BOT_TOKEN, WEBHOOK_PATH, WEBHOOK_URL
 from app.handlers import router
 from app.database import engine, Base
@@ -25,6 +25,11 @@ async def on_startup():
 
     # устанавливаем новый
     await bot.set_webhook(WEBHOOK_URL, allowed_updates=["message", "callback_query"])
+
+    await bot.set_my_commands([
+        BotCommand(command="start", description="Запуск бота"),
+        BotCommand(command="mode", description="Выбрать режим работы"),
+    ])
 
     print("Webhook set to:", WEBHOOK_URL)
 

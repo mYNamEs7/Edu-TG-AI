@@ -1,5 +1,5 @@
 from app.llm import call_llm
-from app.modes import MODES
+from app.modes import MODES, DEFAULT_PROPT
 
 
 async def generate_answer(user_input, mode, history):
@@ -7,12 +7,8 @@ async def generate_answer(user_input, mode, history):
     Упрощённая версия без двойного запроса,
     чтобы не ловить 429.
     """
-
-    default_prompt = """
-    "Ты обязан отвечать строго на русском языке. "
-    "Никогда не используй английский. "
-    """
-    system_prompt = default_prompt + MODES.get(mode, MODES["exam"])
+    
+    system_prompt = DEFAULT_PROPT + MODES.get(mode, MODES["exam"])
 
     messages = [
         {"role": "system", "content": system_prompt},

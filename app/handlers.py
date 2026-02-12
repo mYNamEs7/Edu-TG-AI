@@ -1,5 +1,5 @@
 from aiogram import Router, F
-from aiogram.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message as TgMessage
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message as TgMessage
 from aiogram.filters import Command
 from sqlalchemy import select
 from app.database import AsyncSessionLocal
@@ -32,7 +32,7 @@ async def cmd_mode(message: Message):
 async def mode_callback(callback: CallbackQuery):
     mode = callback.data.split(":")[1]
     text_to_send = f"/mode {mode}"
-    await callback.message.answer("Выбрали сменить режим")
+    
     await change_mode(mode=mode, user_id=callback.message.from_user.id)
     
     await callback.message.answer(f"Вы выбрали: {text_to_send}\n{MODE_DESCRIPTIONS[mode]}")
@@ -86,4 +86,4 @@ async def handle_message(message: TgMessage):
         session.add(Message(user_id=user.id, role="assistant", content=answer))
         await session.commit()
 
-        await message.answer(answer)
+        await message.answer(answer, parse_mode="HTML")
