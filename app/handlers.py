@@ -1,6 +1,6 @@
 from aiogram import Router, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, Message as TgMessage
-from aiogram.filters import Command
+from aiogram.filters import Command, CommandStart
 from sqlalchemy import select
 from app.database import AsyncSessionLocal
 from app.models import User, Message
@@ -10,10 +10,35 @@ import re
 
 router = Router()
 
-@router.message(Command("start"))
-async def cmd_start(message: Message):
+@router.message(CommandStart())
+async def cmd_start(message: TgMessage):
+    keyboard = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text="🚀 Выбрать режим", callback_data="go_mode")]
+        ]
+    )
+
+    text = (
+        "<b>🎓 Образование с нейросетью</b>\n\n"
+        "Добро пожаловать!\n\n"
+        "Я помогу тебе:\n"
+        "• Решать задачи\n"
+        "• Готовиться к экзаменам\n"
+        "• Писать курсовые и дипломные работы\n"
+        "• Получать краткие или развернутые ответы\n\n"
+        "<b>Выбери режим работы</b>, чтобы начать 👇"
+    )
+
     await message.answer(
-        "Привет!\nЯ - нейросеть, помогающая студентам.\nИспользуй меню команд или напиши /mode, чтобы выбрать режим.\nРежим по умолчанию - exam"
+        text,
+        parse_mode="HTML",
+        reply_markup=keyboard
+    )
+
+@router.message(Command("start"))
+async def cmd_start(message: TgMessage):
+    await message.answer(
+        "Привет!\nЯ - нейросеть, помогающая студентам.\nИспользуй меню команд или напиши /mode, чтобы выбрать режим.\nРежим по умолчанию - Экзамен"
     )
 
 @router.message(Command("restart"))
@@ -41,7 +66,7 @@ async def cmd_restart(message: TgMessage):
     await message.answer("История диалога очищена. Начинаем с чистого листа ✅")
 
 @router.message(Command("mode"))
-async def cmd_mode(message: Message):
+async def cmd_mode(message: TgMessage):
     keyboard = InlineKeyboardMarkup(
         inline_keyboard=[
             [InlineKeyboardButton(text=mode, callback_data=f"mode:{mode}")]
@@ -52,6 +77,11 @@ async def cmd_mode(message: Message):
         "Выберите режим работы бота:",
         reply_markup=keyboard
     )
+
+@router.callback_query(lambda c: c.data == "go_mode")
+async def go_mode(callback: CallbackQuery):
+    await callback.message.answer("/mode")
+    await callback.answer()
 
 @router.callback_query(lambda c: c.data and c.data.startswith("mode:"))
 async def mode_callback(callback: CallbackQuery):

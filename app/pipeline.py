@@ -7,8 +7,8 @@ async def generate_answer(user_input, mode, history):
     Упрощённая версия без двойного запроса,
     чтобы не ловить 429.
     """
-    
-    system_prompt = DEFAULT_PROPT + MODES.get(mode, MODES["exam"])
+
+    system_prompt = DEFAULT_PROPT + MODES.get(mode, MODES["Экзамен"])
 
     messages = [
         {"role": "system", "content": system_prompt},

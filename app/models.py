@@ -7,7 +7,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     telegram_id = Column(String, unique=True)
-    mode = Column(String, default="exam")
+    mode = Column(String, default="Экзамен")
 
 class Message(Base):
     __tablename__ = "messages"
