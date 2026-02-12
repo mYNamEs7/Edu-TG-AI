@@ -37,7 +37,7 @@ async def on_shutdown():
     await bot.session.close()
 
 
-@app.post(WEBHOOK_PATH)
+@app.post("/webhook")
 async def webhook_handler(request: Request):
     print("hello 11111")
     data = await request.json()
