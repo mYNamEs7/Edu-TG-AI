@@ -1,11 +1,44 @@
 from aiogram import Router, F
-from aiogram.types import Message as TgMessage
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, Message as TgMessage
+from aiogram.filters import Command
 from sqlalchemy import select
 from app.database import AsyncSessionLocal
 from app.models import User, Message
 from app.pipeline import generate_answer
+from app.modes import MODE_DESCRIPTIONS
 
 router = Router()
+
+@router.message(Command(commands=["start"]))
+async def cmd_start(message: Message):
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="/mode")]
+        ],
+        resize_keyboard=True
+    )
+    await message.answer(
+        "Привет!\nЯ - нейросеть, помогающая студентам.\nИспользуй меню команд или напиши /mode, чтобы выбрать режим.\nРежим по умолчанию - exam",
+        reply_markup=keyboard
+    )
+
+@router.message(Command(commands=["mode"]))
+async def cmd_mode(message: Message):
+    keyboard = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="exam")],
+            [KeyboardButton(text="university")],
+            [KeyboardButton(text="thesis")],
+            [KeyboardButton(text="short")]
+        ],
+        resize_keyboard=True
+    )
+
+    description_text = "Выберите режим работы бота:\n\n"
+    for key, desc in MODE_DESCRIPTIONS.items():
+        description_text += f"{key}: {desc}\n"
+
+    await message.answer(description_text, reply_markup=keyboard)
 
 @router.message(F.text.startswith("/mode"))
 async def change_mode(message: TgMessage):
