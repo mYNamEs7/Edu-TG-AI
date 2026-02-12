@@ -20,7 +20,8 @@ async def on_startup():
     # создаём таблицы
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
-
+        
+    print(WEBHOOK_URL)
     # удаляем старый webhook
     await bot.delete_webhook()
 
@@ -37,7 +38,7 @@ async def on_shutdown():
     await bot.session.close()
 
 
-@app.post("/webhook")
+@app.post(WEBHOOK_PATH)
 async def webhook_handler(request: Request):
     print("hello 11111")
     data = await request.json()

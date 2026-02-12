@@ -18,6 +18,6 @@ DATABASE_URL = DATABASE_URL.replace(
 
 BASE_URL = os.getenv("BASE_URL")
 WEBHOOK_PATH = "/webhook"
-WEBHOOK_URL = "https://web-production-560b9.up.railway.app" + WEBHOOK_PATH
+WEBHOOK_URL = f"{BASE_URL}{WEBHOOK_PATH}"
 
 LLM_URL = "https://apifreellm.com/api/v1/chat"
