@@ -26,37 +26,37 @@ async def change_mode(message: TgMessage):
 @router.message()
 async def handle_message(message: TgMessage):
     await message.answer(f"Ты написал: {message.text}")
-    
-    async with AsyncSessionLocal() as session:
 
-        result = await session.execute(
-            select(User).where(User.telegram_id == str(message.from_user.id))
-        )
-        user = result.scalar_one_or_none()
+    # async with AsyncSessionLocal() as session:
 
-        if not user:
-            user = User(telegram_id=str(message.from_user.id))
-            session.add(user)
-            await session.commit()
+    #     result = await session.execute(
+    #         select(User).where(User.telegram_id == str(message.from_user.id))
+    #     )
+    #     user = result.scalar_one_or_none()
 
-        history_query = await session.execute(
-            select(Message).where(Message.user_id == user.id)
-        )
-        history = history_query.scalars().all()
+    #     if not user:
+    #         user = User(telegram_id=str(message.from_user.id))
+    #         session.add(user)
+    #         await session.commit()
 
-        history_formatted = [
-            {"role": msg.role, "content": msg.content}
-            for msg in history[-10:]
-        ]
+    #     history_query = await session.execute(
+    #         select(Message).where(Message.user_id == user.id)
+    #     )
+    #     history = history_query.scalars().all()
 
-        answer = await generate_answer(
-            message.text,
-            user.mode,
-            history_formatted
-        )
+    #     history_formatted = [
+    #         {"role": msg.role, "content": msg.content}
+    #         for msg in history[-10:]
+    #     ]
 
-        session.add(Message(user_id=user.id, role="user", content=message.text))
-        session.add(Message(user_id=user.id, role="assistant", content=answer))
-        await session.commit()
+    #     answer = await generate_answer(
+    #         message.text,
+    #         user.mode,
+    #         history_formatted
+    #     )
 
-        await message.answer(answer)
+    #     session.add(Message(user_id=user.id, role="user", content=message.text))
+    #     session.add(Message(user_id=user.id, role="assistant", content=answer))
+    #     await session.commit()
+
+    #     await message.answer(answer)
