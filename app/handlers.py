@@ -32,7 +32,7 @@ async def cmd_mode(message: Message):
 async def mode_callback(callback: CallbackQuery):
     mode = callback.data.split(":")[1]
     text_to_send = f"/mode {mode}"
-
+    await callback.message.answer("Выбрали сменить режим")
     await change_mode(mode=mode, user_id=callback.message.from_user.id)
     
     await callback.message.answer(f"Вы выбрали: {text_to_send}\n{MODE_DESCRIPTIONS[mode]}")

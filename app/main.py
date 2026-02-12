@@ -24,7 +24,7 @@ async def on_startup():
     await bot.delete_webhook()
 
     # устанавливаем новый
-    await bot.set_webhook(WEBHOOK_URL)
+    await bot.set_webhook(WEBHOOK_URL, allowed_updates=["message", "callback_query"])
 
     print("Webhook set to:", WEBHOOK_URL)
 
