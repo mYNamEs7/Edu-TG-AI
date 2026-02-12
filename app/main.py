@@ -27,7 +27,8 @@ async def on_startup():
     await bot.set_webhook(WEBHOOK_URL, allowed_updates=["message", "callback_query"])
 
     await bot.set_my_commands([
-        BotCommand(command="start", description="Запуск бота"),
+        BotCommand(command="start", description="Запустить бота"),
+        BotCommand(command="restart", description="Перезапустить бота"),
         BotCommand(command="mode", description="Выбрать режим работы"),
     ])
 

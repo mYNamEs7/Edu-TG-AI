@@ -16,6 +16,30 @@ async def cmd_start(message: Message):
         "Привет!\nЯ - нейросеть, помогающая студентам.\nИспользуй меню команд или напиши /mode, чтобы выбрать режим.\nРежим по умолчанию - exam"
     )
 
+@router.message(Command("restart"))
+async def cmd_restart(message: TgMessage):
+    user_id = str(message.from_user.id)
+
+    async with AsyncSessionLocal() as session:
+        # Находим пользователя
+        result = await session.execute(
+            select(User).where(User.telegram_id == user_id)
+        )
+        user = result.scalar_one_or_none()
+
+        if not user:
+            await message.answer("История пуста.")
+            return
+
+        # Удаляем все сообщения пользователя
+        await session.execute(
+            Message.__table__.delete().where(Message.user_id == user.id)
+        )
+
+        await session.commit()
+
+    await message.answer("История диалога очищена. Начинаем с чистого листа ✅")
+
 @router.message(Command("mode"))
 async def cmd_mode(message: Message):
     keyboard = InlineKeyboardMarkup(
