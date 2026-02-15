@@ -72,9 +72,20 @@ Edu TG AI — это интеллектуальный Telegram-бот, кото�
 - Telegram Bot Token
 - OpenAI API Key
 
-### Установка и запуск
+### Установка
 
-```bash
-git clone https://github.com/mYNamEs7/Edu-TG-AI.git
-cd Edu-TG-AI
-pip install -r requirements.txt
+    git clone https://github.com/mYNamEs7/Edu-TG-AI.git
+    cd Edu-TG-AI
+    pip install -r requirements.txt
+
+### Настройка
+
+Создайте <code>.env</code> файл:
+
+    BOT_TOKEN=your_telegram_bot_token
+    OPENAI_API_KEY=your_openai_api_key
+    DATABASE_URL=postgresql://user:password@localhost/dbname
+
+### Запуск
+
+    python main.py
